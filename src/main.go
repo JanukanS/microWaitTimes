@@ -84,23 +84,19 @@ func (aad ahsApiData) encodeResp() []WaitData {
 }
 
 func collectData(dbInst *gorm.DB) {
-	resp, err := http.Get("https://www.albertahealthservices.ca/Webapps/WaitTimes/api/waittimes")
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
 	data1 := ahsApiData{timeReceived: time.Now()}
-	jsonErr := json.Unmarshal(body, &data1.data)
-	if jsonErr != nil {
-		log.Fatalln(jsonErr)
+	var body []byte
+	resp, err := http.Get("https://www.albertahealthservices.ca/Webapps/WaitTimes/api/waittimes")
+	if err == nil {
+		body, err = ioutil.ReadAll(resp.Body)
 	}
-	wdSlice := data1.encodeResp()
-	dbInst.Create(&wdSlice)
+	if err == nil {
+		err = json.Unmarshal(body, &data1.data)
+	}
+	if err == nil {
+		wdSlice := data1.encodeResp()
+		dbInst.Create(&wdSlice)
+	}
 }
 
 func main() {
