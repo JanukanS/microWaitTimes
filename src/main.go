@@ -83,12 +83,6 @@ func (aad ahsApiData) encodeResp() []WaitData {
 	return wdSlice
 }
 
-func dumpData(dbInst *gorm.DB, wdSlice []WaitData) {
-	for _, wd := range wdSlice {
-		dbInst.Create(&wd)
-	}
-}
-
 func collectData(dbInst *gorm.DB) {
 	resp, err := http.Get("https://www.albertahealthservices.ca/Webapps/WaitTimes/api/waittimes")
 	if err != nil {
@@ -105,8 +99,8 @@ func collectData(dbInst *gorm.DB) {
 	if jsonErr != nil {
 		log.Fatalln(jsonErr)
 	}
-
-	dumpData(dbInst, data1.encodeResp())
+	wdSlice := data1.encodeResp()
+	dbInst.Create(&wdSlice)
 }
 
 func main() {
