@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"io/ioutil"
@@ -71,16 +70,6 @@ func (cd cityData) encodeData(dataTime time.Time, cityName string) []WaitData {
 	return wdSlice
 }
 
-//type ahsData map[string]cityData
-
-//func (ad ahsData) encodeCities(dataTime time.Time) []WaitData {
-//	var wdSlice []WaitData
-//	for cityName, cdInst := range ad {
-//		wdSlice = append(wdSlice, cdInst.encodeData(dataTime, cityName)...)
-//	}
-//	return wdSlice
-//}
-
 type ahsApiData struct {
 	timeReceived time.Time
 	data         map[string]cityData
@@ -124,6 +113,8 @@ func main() {
 	db, err := gorm.Open(sqlite.Open("./data/test.db"), &gorm.Config{})
 	if err != nil {
 		log.Fatalln("failed to connect database")
+	} else {
+		log.Println("SQLiteDB connected")
 	}
 
 	err = db.AutoMigrate(&WaitData{})
@@ -132,6 +123,6 @@ func main() {
 	}
 	for range time.Tick(time.Second * 120) {
 		collectData(db)
-		fmt.Println("Occurance")
+		log.Println("AHS API data polled")
 	}
 }
