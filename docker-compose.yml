@@ -1,0 +1,11 @@
+version: "3.3"
+services:
+  ms_wait_times:
+    build: .
+    environment:
+      PROJECT_URL: "34.71.46.196"
+    volumes:
+      - db_data:/app/data
+
+volumes:
+  db_data:
